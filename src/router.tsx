@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { Navigate, Outlet, createBrowserRouter } from "react-router";
 import { AuthenticatedView } from "./app/AuthenticatedView";
+import { CounselingBoardView } from "./app/CounselingBoardView";
+import { CounselingDetailView } from "./app/CounselingDetailView";
 import { LoginView } from "./app/LoginView";
 import { SignupView } from "./app/SignupView";
 import { refreshAccessToken } from "./auth/authApi";
@@ -69,6 +71,10 @@ export const router = createBrowserRouter([
       {
         path: "/talk",
         lazy: () => import("./app/VoiceTalkView").then(({ VoiceTalkView: Component }) => ({ Component })),
+      { path: "/children/:childId/counseling", element: <CounselingBoardView /> },
+      {
+        path: "/children/:childId/counseling/:sessionId",
+        element: <CounselingDetailView />,
       },
     ],
   },
