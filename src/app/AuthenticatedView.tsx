@@ -1,4 +1,4 @@
-import { SubmitEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   AlertCircle,
   ArrowRight,
@@ -8,6 +8,7 @@ import {
   Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -54,6 +55,13 @@ type RegisterChildArg = {
 type RegisterChildResult = {
   profile: ChildProfile;
   imageUploadFailed: boolean;
+};
+
+type ChildFormValues = {
+  name: string;
+  birthDate: string;
+  gender: ChildGender | "";
+  profileImage: FileList;
 };
 
 async function registerChildMutation(
@@ -111,10 +119,19 @@ export function AuthenticatedView() {
     RegisterChildArg
   >(CHILDREN_KEY, registerChildMutation);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [gender, setGender] = useState<ChildGender | "">("");
-  const [registerError, setRegisterError] = useState("");
   const [notice, setNotice] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const {
+    clearErrors,
+    control,
+    handleSubmit,
+    register,
+    reset,
+    setError,
+    formState: { errors },
+  } = useForm<ChildFormValues>({
+    defaultValues: { name: "", birthDate: "", gender: "" },
+  });
 
   useEffect(() => {
     if (
@@ -125,37 +142,18 @@ export function AuthenticatedView() {
     }
   }, [children, selectChild, selectedChildId]);
 
-  const handleRegister = useCallback(async (event: SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setRegisterError("");
+  const handleRegister = useCallback<SubmitHandler<ChildFormValues>>(async (data) => {
+    clearErrors("root");
     setNotice("");
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const rawImage = formData.get("profileImage");
-    const image =
-      rawImage instanceof File && rawImage.size > 0 ? rawImage : undefined;
-
-    if (!gender) {
-      setRegisterError("성별을 선택해 주세요.");
-      return;
-    }
-    if (image && !ALLOWED_IMAGE_TYPES.includes(image.type)) {
-      setRegisterError(
-        "프로필 사진은 JPEG, PNG, WebP 형식만 사용할 수 있어요.",
-      );
-      return;
-    }
-    if (image && image.size > MAX_IMAGE_SIZE) {
-      setRegisterError("프로필 사진은 5MB 이하로 선택해 주세요.");
-      return;
-    }
+    const selectedImage = data.profileImage?.[0];
+    const image = selectedImage?.size ? selectedImage : undefined;
 
     try {
       const result = await registerChild({
         input: {
-          name: String(formData.get("name") ?? "").trim(),
-          birthDate: String(formData.get("birthDate") ?? ""),
-          gender,
+          name: data.name,
+          birthDate: data.birthDate,
+          gender: data.gender as ChildGender,
         },
         image,
       });
@@ -173,13 +171,12 @@ export function AuthenticatedView() {
           ? `${result.profile.name}이 등록되었지만 사진은 업로드하지 못했어요.`
           : `${result.profile.name}이 새로 등록되고 선택되었어요.`,
       );
-      form.reset();
-      setGender("");
+      reset();
       setIsDialogOpen(false);
     } catch (mutationError) {
-      setRegisterError(getErrorMessage(mutationError));
+      setError("root", { message: getErrorMessage(mutationError) });
     }
-  }, [gender, mutate, registerChild, selectChild]);
+  }, [clearErrors, mutate, registerChild, reset, selectChild, setError]);
 
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
@@ -321,7 +318,7 @@ export function AuthenticatedView() {
                 className="group min-w-0 text-center"
                 type="button"
                 onClick={() => {
-                  setRegisterError("");
+                  clearErrors();
                   setIsDialogOpen(true);
                 }}
               >
@@ -402,44 +399,53 @@ export function AuthenticatedView() {
               아이에게 맞는 대화를 준비할 수 있도록 알려주세요.
             </DialogDescription>
           </DialogHeader>
-          <form className="space-y-4" onSubmit={handleRegister}>
+          <form className="space-y-4" onSubmit={handleSubmit(handleRegister)} noValidate>
             <div className="space-y-2">
               <Label htmlFor="child-name">이름</Label>
               <Input
                 id="child-name"
-                name="name"
                 maxLength={30}
                 placeholder="예: 민준"
-                required
+                aria-invalid={Boolean(errors.name)}
                 className="h-11 bg-white"
+                {...register("name", { setValueAs: (value: string) => value.trim(), required: "이름을 입력해 주세요." })}
               />
+              {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="child-birth-date">생년월일</Label>
               <Input
                 id="child-birth-date"
-                name="birthDate"
                 type="date"
                 max={new Date().toISOString().slice(0, 10)}
-                required
+                aria-invalid={Boolean(errors.birthDate)}
                 className="h-11 bg-white"
+                {...register("birthDate", {
+                  required: "생년월일을 입력해 주세요.",
+                  validate: (value) => value <= new Date().toISOString().slice(0, 10) || "생년월일은 오늘 이후일 수 없어요.",
+                })}
               />
+              {errors.birthDate && <p className="text-xs text-destructive">{errors.birthDate.message}</p>}
             </div>
             <div className="space-y-2">
               <Label>성별</Label>
-              <Select
-                value={gender}
-                onValueChange={(value) => setGender(value as ChildGender)}
-                required
-              >
-                <SelectTrigger className="h-11 w-full bg-white">
-                  <SelectValue placeholder="선택해 주세요" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="MALE">남아</SelectItem>
-                  <SelectItem value="FEMALE">여아</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="gender"
+                control={control}
+                rules={{ required: "성별을 선택해 주세요." }}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="h-11 w-full bg-white" aria-invalid={Boolean(errors.gender)} ref={field.ref}>
+                      <SelectValue placeholder="선택해 주세요" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="MALE">남아</SelectItem>
+                      <SelectItem value="FEMALE">여아</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.gender && <p className="text-xs text-destructive">{errors.gender.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="child-image">
@@ -448,11 +454,20 @@ export function AuthenticatedView() {
               </Label>
               <Input
                 id="child-image"
-                name="profileImage"
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
+                aria-invalid={Boolean(errors.profileImage)}
                 className="h-auto bg-white py-2"
+                {...register("profileImage", {
+                  validate: (files) => {
+                    const image = files?.[0];
+                    if (!image) return true;
+                    if (!ALLOWED_IMAGE_TYPES.includes(image.type)) return "프로필 사진은 JPEG, PNG, WebP 형식만 사용할 수 있어요.";
+                    return image.size <= MAX_IMAGE_SIZE || "프로필 사진은 5MB 이하로 선택해 주세요.";
+                  },
+                })}
               />
+              {errors.profileImage && <p className="text-xs text-destructive">{errors.profileImage.message}</p>}
             </div>
             <Alert className="border-[#ead8cc] bg-[#fff7f1] text-[#866b5e]">
               <Info />
@@ -461,10 +476,10 @@ export function AuthenticatedView() {
                 후 사진이 이어서 업로드됩니다.
               </AlertDescription>
             </Alert>
-            {registerError && (
+            {errors.root?.message && (
               <Alert variant="destructive">
                 <AlertCircle />
-                <AlertDescription>{registerError}</AlertDescription>
+                <AlertDescription>{errors.root.message}</AlertDescription>
               </Alert>
             )}
             <DialogFooter className="-mx-4 -mb-4 mt-5">
