@@ -7,8 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ApiError, signupRequest } from "../../auth/authApi";
-import { AuthLayout } from "./AuthLayout";
+import { ApiError, signupRequest } from "../auth/authApi";
+import { AuthLayout } from "../components/AuthLayout";
 
 type SignupErrors = { loginId?: string; nickname?: string; password?: string; confirmPassword?: string; terms?: string };
 

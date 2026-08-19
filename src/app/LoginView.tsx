@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ApiError, loginRequest } from "../../auth/authApi";
-import { AuthLayout } from "./AuthLayout";
+import { ApiError, loginRequest } from "../auth/authApi";
+import { AuthLayout } from "../components/AuthLayout";
 
 export function LoginView() {
   const navigate = useNavigate();
