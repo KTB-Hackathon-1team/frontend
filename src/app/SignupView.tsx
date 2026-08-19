@@ -43,7 +43,7 @@ export function SignupView() {
 
   const fieldClass = "h-11 bg-white";
   return (
-    <AuthLayout eyebrow="따뜻한 기술, 안전한 연결" title={<>마음을 이해하는<br />시간을 시작해요</>} description={<>부모 계정을 먼저 만든 뒤,<br />아이 프로필은 천천히 연결할 수 있어요.</>} trustMessage="아이의 이야기는 소중하게 보호돼요">
+    <AuthLayout>
       <Card className="border-[#eadfd8] bg-white/90 shadow-xl shadow-[#7e482f]/10 backdrop-blur">
         <CardHeader className="items-center pb-4 text-center"><span className="text-xs font-bold tracking-[.14em] text-[#a8623e] uppercase">부모 계정</span><CardTitle className="text-3xl font-bold tracking-[-.05em] text-[#342721]">회원가입</CardTitle><CardDescription className="text-[#79685f]">아이 프로필은 가입 후 연결할 수 있어요.</CardDescription></CardHeader>
         <CardContent>

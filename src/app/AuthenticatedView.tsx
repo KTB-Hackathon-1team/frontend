@@ -195,20 +195,9 @@ export function AuthenticatedView() {
 
   return (
     <main className="min-h-svh bg-[radial-gradient(circle_at_50%_16%,#fff0df_0,transparent_30%),#fbf7f3] text-[#342721]">
-      <header className="grid min-h-18 grid-cols-[1fr_auto] items-center gap-6 border-b border-[#eadfd8] bg-white/90 px-5 backdrop-blur lg:grid-cols-[1fr_auto_1fr] lg:px-[clamp(24px,5vw,72px)]">
+      <header className="grid min-h-18 grid-cols-[1fr_auto] items-center gap-6 border-b border-[#eadfd8] bg-white/90 px-5 backdrop-blur">
         <Brand />
-        <nav
-          className="hidden items-center gap-7 text-sm text-[#79685f] lg:flex"
-          aria-label="주요 메뉴"
-        >
-          <span className="font-bold text-[#75432f]">아이 선택</span>
-          <span>육아 길잡이</span>
-          <span>대화 기록</span>
-        </nav>
         <div className="flex items-center justify-end gap-2">
-          <span className="hidden rounded-full bg-[#f5e8dd] px-3 py-2 text-xs text-[#6f5f57] sm:inline">
-            {user.nickname} 부모님
-          </span>
           <Button
             variant="ghost"
             size="sm"
@@ -222,14 +211,14 @@ export function AuthenticatedView() {
       </header>
 
       <section
-        className="mx-auto w-full max-w-6xl px-4 py-12 text-center sm:px-6 lg:py-20"
+        className="w-full px-4 py-12 text-center"
         aria-labelledby="child-picker-title"
       >
         <span className="text-xs font-bold tracking-[.14em] text-[#a8623e] uppercase">
           우리 가족 프로필
         </span>
         <h1
-          className="mt-3 text-4xl font-bold tracking-[-.06em] sm:text-5xl"
+          className="mt-3 text-4xl font-bold tracking-[-.06em]"
           id="child-picker-title"
         >
           누구와 함께 시작할까요?
@@ -239,7 +228,7 @@ export function AuthenticatedView() {
         </p>
 
         {error && (
-          <Alert className="mx-auto mt-7 max-w-2xl border-[#efd7c8] bg-[#fff5ed] text-left text-[#8b523a]">
+          <Alert className="mt-7 border-[#efd7c8] bg-[#fff5ed] text-left text-[#8b523a]">
             <AlertCircle />
             <AlertDescription>
               <strong className="block">{error.message}</strong>
@@ -260,7 +249,7 @@ export function AuthenticatedView() {
         ) : (
           <>
             <div
-              className="mt-10 grid grid-cols-2 justify-center gap-5 sm:grid-cols-[repeat(auto-fit,minmax(150px,180px))] sm:gap-8"
+              className="mt-10 grid grid-cols-2 justify-center gap-5"
               aria-label="아이 프로필 목록"
             >
               {children.map((child, index) => {
@@ -340,8 +329,8 @@ export function AuthenticatedView() {
               </p>
             )}
 
-            <Card className="mx-auto mt-10 max-w-2xl border-[#eadfd8] bg-white/80">
-              <CardContent className="flex flex-col items-center justify-between gap-4 p-5 sm:flex-row">
+            <Card className="mt-10 border-[#eadfd8] bg-white/80">
+              <CardContent className="flex flex-col items-center justify-between gap-4 p-5">
                 <span className="text-sm text-[#79685f]">
                   {selectedChild ? (
                     <>
@@ -370,7 +359,7 @@ export function AuthenticatedView() {
               </CardContent>
             </Card>
             {notice && (
-              <Alert className="mx-auto mt-4 max-w-2xl border-[#ead8cc] bg-[#fff7f1] text-left text-[#80503b]">
+              <Alert className="mt-4 border-[#ead8cc] bg-[#fff7f1] text-left text-[#80503b]">
                 <Info />
                 <AlertDescription>{notice}</AlertDescription>
               </Alert>
@@ -385,7 +374,7 @@ export function AuthenticatedView() {
           if (!isMutating) setIsDialogOpen(open);
         }}
       >
-        <DialogContent className="max-h-[calc(100svh-2rem)] overflow-y-auto border-[#eadfd8] bg-[#fffdfb] sm:max-w-lg">
+        <DialogContent className="max-h-[calc(100svh-2rem)] overflow-y-auto border-[#eadfd8] bg-[#fffdfb]">
           <DialogHeader>
             <span className="text-xs font-bold tracking-[.14em] text-[#a8623e] uppercase">
               새 프로필

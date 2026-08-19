@@ -67,7 +67,7 @@ export function VoiceTalkView() {
       <p className="sr-only" aria-live="polite">{message || STATUS_LABEL[status]}</p>
 
       {import.meta.env.DEV && (
-        <section className="fixed inset-x-4 bottom-4 max-h-56 overflow-auto rounded-2xl bg-[#2c211d]/90 p-4 text-sm text-white shadow-2xl backdrop-blur sm:left-auto sm:w-[28rem]" aria-label="개발용 대화 전사">
+        <section className="fixed inset-x-4 bottom-4 max-h-56 overflow-auto rounded-2xl bg-[#2c211d]/90 p-4 text-sm text-white shadow-2xl backdrop-blur" aria-label="개발용 대화 전사">
           {message && <p className="mb-3 text-[#ffb8a9]">{message}</p>}
           {utterances.length ? (
             <ol className="space-y-2">

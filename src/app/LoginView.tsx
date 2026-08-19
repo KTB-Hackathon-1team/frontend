@@ -36,7 +36,7 @@ export function LoginView() {
   }, [navigate]);
 
   return (
-    <AuthLayout eyebrow="AI 육아 길잡이" title={<>안심하고<br />이야기를 시작하세요</>} description={<>아이의 마음을 소중히 듣고,<br />서로를 이해하는 대화를 함께 만들어요.</>} trustMessage="모든 대화는 안전하게 보호돼요">
+    <AuthLayout>
       <Card className="border-[#eadfd8] bg-white/90 shadow-xl shadow-[#7e482f]/10 backdrop-blur">
         <CardHeader className="items-center text-center">
           <span className="text-xs font-bold tracking-[.14em] text-[#a8623e] uppercase">다시 만나서 반가워요</span>
