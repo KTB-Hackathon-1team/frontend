@@ -1,4 +1,4 @@
-import { SubmitEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   AlertCircle,
   ArrowRight,
@@ -8,6 +8,7 @@ import {
   Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -54,6 +55,13 @@ type RegisterChildArg = {
 type RegisterChildResult = {
   profile: ChildProfile;
   imageUploadFailed: boolean;
+};
+
+type ChildFormValues = {
+  name: string;
+  birthDate: string;
+  gender: ChildGender | "";
+  profileImage: FileList;
 };
 
 async function registerChildMutation(
@@ -111,10 +119,19 @@ export function AuthenticatedView() {
     RegisterChildArg
   >(CHILDREN_KEY, registerChildMutation);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [gender, setGender] = useState<ChildGender | "">("");
-  const [registerError, setRegisterError] = useState("");
   const [notice, setNotice] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const {
+    clearErrors,
+    control,
+    handleSubmit,
+    register,
+    reset,
+    setError,
+    formState: { errors },
+  } = useForm<ChildFormValues>({
+    defaultValues: { name: "", birthDate: "", gender: "" },
+  });
 
   useEffect(() => {
     if (
@@ -125,37 +142,18 @@ export function AuthenticatedView() {
     }
   }, [children, selectChild, selectedChildId]);
 
-  const handleRegister = useCallback(async (event: SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setRegisterError("");
+  const handleRegister = useCallback<SubmitHandler<ChildFormValues>>(async (data) => {
+    clearErrors("root");
     setNotice("");
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const rawImage = formData.get("profileImage");
-    const image =
-      rawImage instanceof File && rawImage.size > 0 ? rawImage : undefined;
-
-    if (!gender) {
-      setRegisterError("성별을 선택해 주세요.");
-      return;
-    }
-    if (image && !ALLOWED_IMAGE_TYPES.includes(image.type)) {
-      setRegisterError(
-        "프로필 사진은 JPEG, PNG, WebP 형식만 사용할 수 있어요.",
-      );
-      return;
-    }
-    if (image && image.size > MAX_IMAGE_SIZE) {
-      setRegisterError("프로필 사진은 5MB 이하로 선택해 주세요.");
-      return;
-    }
+    const selectedImage = data.profileImage?.[0];
+    const image = selectedImage?.size ? selectedImage : undefined;
 
     try {
       const result = await registerChild({
         input: {
-          name: String(formData.get("name") ?? "").trim(),
-          birthDate: String(formData.get("birthDate") ?? ""),
-          gender,
+          name: data.name,
+          birthDate: data.birthDate,
+          gender: data.gender as ChildGender,
         },
         image,
       });
@@ -173,13 +171,12 @@ export function AuthenticatedView() {
           ? `${result.profile.name}이 등록되었지만 사진은 업로드하지 못했어요.`
           : `${result.profile.name}이 새로 등록되고 선택되었어요.`,
       );
-      form.reset();
-      setGender("");
+      reset();
       setIsDialogOpen(false);
     } catch (mutationError) {
-      setRegisterError(getErrorMessage(mutationError));
+      setError("root", { message: getErrorMessage(mutationError) });
     }
-  }, [gender, mutate, registerChild, selectChild]);
+  }, [clearErrors, mutate, registerChild, reset, selectChild, setError]);
 
   const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
@@ -198,20 +195,9 @@ export function AuthenticatedView() {
 
   return (
     <main className="min-h-svh bg-[radial-gradient(circle_at_50%_16%,#fff0df_0,transparent_30%),#fbf7f3] text-[#342721]">
-      <header className="grid min-h-18 grid-cols-[1fr_auto] items-center gap-6 border-b border-[#eadfd8] bg-white/90 px-5 backdrop-blur lg:grid-cols-[1fr_auto_1fr] lg:px-[clamp(24px,5vw,72px)]">
+      <header className="grid min-h-18 grid-cols-[1fr_auto] items-center gap-6 border-b border-[#eadfd8] bg-white/90 px-5 backdrop-blur">
         <Brand />
-        <nav
-          className="hidden items-center gap-7 text-sm text-[#79685f] lg:flex"
-          aria-label="주요 메뉴"
-        >
-          <span className="font-bold text-[#75432f]">아이 선택</span>
-          <span>육아 길잡이</span>
-          <span>대화 기록</span>
-        </nav>
         <div className="flex items-center justify-end gap-2">
-          <span className="hidden rounded-full bg-[#f5e8dd] px-3 py-2 text-xs text-[#6f5f57] sm:inline">
-            {user.nickname} 부모님
-          </span>
           <Button
             variant="ghost"
             size="sm"
@@ -225,14 +211,14 @@ export function AuthenticatedView() {
       </header>
 
       <section
-        className="mx-auto w-full max-w-6xl px-4 py-12 text-center sm:px-6 lg:py-20"
+        className="w-full px-4 py-12 text-center"
         aria-labelledby="child-picker-title"
       >
         <span className="text-xs font-bold tracking-[.14em] text-[#a8623e] uppercase">
           우리 가족 프로필
         </span>
         <h1
-          className="mt-3 text-4xl font-bold tracking-[-.06em] sm:text-5xl"
+          className="mt-3 text-4xl font-bold tracking-[-.06em]"
           id="child-picker-title"
         >
           누구와 함께 시작할까요?
@@ -242,7 +228,7 @@ export function AuthenticatedView() {
         </p>
 
         {error && (
-          <Alert className="mx-auto mt-7 max-w-2xl border-[#efd7c8] bg-[#fff5ed] text-left text-[#8b523a]">
+          <Alert className="mt-7 border-[#efd7c8] bg-[#fff5ed] text-left text-[#8b523a]">
             <AlertCircle />
             <AlertDescription>
               <strong className="block">{error.message}</strong>
@@ -263,7 +249,7 @@ export function AuthenticatedView() {
         ) : (
           <>
             <div
-              className="mt-10 grid grid-cols-2 justify-center gap-5 sm:grid-cols-[repeat(auto-fit,minmax(150px,180px))] sm:gap-8"
+              className="mt-10 grid grid-cols-2 justify-center gap-5"
               aria-label="아이 프로필 목록"
             >
               {children.map((child, index) => {
@@ -321,7 +307,7 @@ export function AuthenticatedView() {
                 className="group min-w-0 text-center"
                 type="button"
                 onClick={() => {
-                  setRegisterError("");
+                  clearErrors();
                   setIsDialogOpen(true);
                 }}
               >
@@ -343,8 +329,8 @@ export function AuthenticatedView() {
               </p>
             )}
 
-            <Card className="mx-auto mt-10 max-w-2xl border-[#eadfd8] bg-white/80">
-              <CardContent className="flex flex-col items-center justify-between gap-4 p-5 sm:flex-row">
+            <Card className="mt-10 border-[#eadfd8] bg-white/80">
+              <CardContent className="flex flex-col items-center justify-between gap-4 p-5">
                 <span className="text-sm text-[#79685f]">
                   {selectedChild ? (
                     <>
@@ -360,11 +346,10 @@ export function AuthenticatedView() {
                 <Button
                   className="h-11 min-w-52 bg-gradient-to-r from-[#a8623e] to-[#75432f] text-white"
                   disabled={!selectedChild}
-                  onClick={() => {
-                    if (!selectedChild) return;
-                    selectChild(selectedChild.id);
-                    navigate(`/children/${selectedChild.id}/counseling`);
-                  }}
+                  onClick={() =>
+                    selectedChild &&
+                    navigate("/talk")
+                  }
                 >
                   {selectedChild
                     ? `${selectedChild.name}이와 시작하기`
@@ -374,7 +359,7 @@ export function AuthenticatedView() {
               </CardContent>
             </Card>
             {notice && (
-              <Alert className="mx-auto mt-4 max-w-2xl border-[#ead8cc] bg-[#fff7f1] text-left text-[#80503b]">
+              <Alert className="mt-4 border-[#ead8cc] bg-[#fff7f1] text-left text-[#80503b]">
                 <Info />
                 <AlertDescription>{notice}</AlertDescription>
               </Alert>
@@ -389,7 +374,7 @@ export function AuthenticatedView() {
           if (!isMutating) setIsDialogOpen(open);
         }}
       >
-        <DialogContent className="max-h-[calc(100svh-2rem)] overflow-y-auto border-[#eadfd8] bg-[#fffdfb] sm:max-w-lg">
+        <DialogContent className="max-h-[calc(100svh-2rem)] overflow-y-auto border-[#eadfd8] bg-[#fffdfb]">
           <DialogHeader>
             <span className="text-xs font-bold tracking-[.14em] text-[#a8623e] uppercase">
               새 프로필
@@ -401,44 +386,53 @@ export function AuthenticatedView() {
               아이에게 맞는 대화를 준비할 수 있도록 알려주세요.
             </DialogDescription>
           </DialogHeader>
-          <form className="space-y-4" onSubmit={handleRegister}>
+          <form className="space-y-4" onSubmit={handleSubmit(handleRegister)} noValidate>
             <div className="space-y-2">
               <Label htmlFor="child-name">이름</Label>
               <Input
                 id="child-name"
-                name="name"
                 maxLength={30}
                 placeholder="예: 민준"
-                required
+                aria-invalid={Boolean(errors.name)}
                 className="h-11 bg-white"
+                {...register("name", { setValueAs: (value: string) => value.trim(), required: "이름을 입력해 주세요." })}
               />
+              {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="child-birth-date">생년월일</Label>
               <Input
                 id="child-birth-date"
-                name="birthDate"
                 type="date"
                 max={new Date().toISOString().slice(0, 10)}
-                required
+                aria-invalid={Boolean(errors.birthDate)}
                 className="h-11 bg-white"
+                {...register("birthDate", {
+                  required: "생년월일을 입력해 주세요.",
+                  validate: (value) => value <= new Date().toISOString().slice(0, 10) || "생년월일은 오늘 이후일 수 없어요.",
+                })}
               />
+              {errors.birthDate && <p className="text-xs text-destructive">{errors.birthDate.message}</p>}
             </div>
             <div className="space-y-2">
               <Label>성별</Label>
-              <Select
-                value={gender}
-                onValueChange={(value) => setGender(value as ChildGender)}
-                required
-              >
-                <SelectTrigger className="h-11 w-full bg-white">
-                  <SelectValue placeholder="선택해 주세요" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="MALE">남아</SelectItem>
-                  <SelectItem value="FEMALE">여아</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="gender"
+                control={control}
+                rules={{ required: "성별을 선택해 주세요." }}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="h-11 w-full bg-white" aria-invalid={Boolean(errors.gender)} ref={field.ref}>
+                      <SelectValue placeholder="선택해 주세요" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="MALE">남아</SelectItem>
+                      <SelectItem value="FEMALE">여아</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.gender && <p className="text-xs text-destructive">{errors.gender.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="child-image">
@@ -447,11 +441,20 @@ export function AuthenticatedView() {
               </Label>
               <Input
                 id="child-image"
-                name="profileImage"
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
+                aria-invalid={Boolean(errors.profileImage)}
                 className="h-auto bg-white py-2"
+                {...register("profileImage", {
+                  validate: (files) => {
+                    const image = files?.[0];
+                    if (!image) return true;
+                    if (!ALLOWED_IMAGE_TYPES.includes(image.type)) return "프로필 사진은 JPEG, PNG, WebP 형식만 사용할 수 있어요.";
+                    return image.size <= MAX_IMAGE_SIZE || "프로필 사진은 5MB 이하로 선택해 주세요.";
+                  },
+                })}
               />
+              {errors.profileImage && <p className="text-xs text-destructive">{errors.profileImage.message}</p>}
             </div>
             <Alert className="border-[#ead8cc] bg-[#fff7f1] text-[#866b5e]">
               <Info />
@@ -460,10 +463,10 @@ export function AuthenticatedView() {
                 후 사진이 이어서 업로드됩니다.
               </AlertDescription>
             </Alert>
-            {registerError && (
+            {errors.root?.message && (
               <Alert variant="destructive">
                 <AlertCircle />
-                <AlertDescription>{registerError}</AlertDescription>
+                <AlertDescription>{errors.root.message}</AlertDescription>
               </Alert>
             )}
             <DialogFooter className="-mx-4 -mb-4 mt-5">

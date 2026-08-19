@@ -68,6 +68,9 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       { path: "/dashboard", element: <AuthenticatedView /> },
+      {
+        path: "/talk",
+        lazy: () => import("./app/VoiceTalkView").then(({ VoiceTalkView: Component }) => ({ Component })),
       { path: "/children/:childId/counseling", element: <CounselingBoardView /> },
       {
         path: "/children/:childId/counseling/:sessionId",
