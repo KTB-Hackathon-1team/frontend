@@ -1,13 +1,18 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { ApiError } from "../../src/auth/authApi";
+import { useAuth } from "../../src/auth/AuthContext";
+import { AuthenticatedView } from "./AuthenticatedView";
 
 export function LoginView() {
+  const { user, isRestoring, login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ loginId?: string; password?: string }>({});
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const loginId = String(form.get("loginId") ?? "").trim();
@@ -20,8 +25,18 @@ export function LoginView() {
       setMessage("");
       return;
     }
-    setMessage("로그인 API 연결 전 데모 화면입니다.");
+    setIsSubmitting(true);
+    setMessage("");
+    try {
+      await login(loginId, password);
+    } catch (error) {
+      setMessage(error instanceof ApiError ? error.message : "로그인 중 문제가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
+
+  if (user) return <AuthenticatedView />;
 
   return (
     <main className="auth-page">
@@ -64,8 +79,8 @@ export function LoginView() {
               </span>
               {errors.password && <small className="field-error" id="login-password-error">{errors.password}</small>}
             </label>
-            <button className="primary-button" type="submit">로그인</button>
-            {message && <p className="form-message" role="status">{message}</p>}
+            <button className="primary-button" type="submit" disabled={isSubmitting || isRestoring}>{isRestoring ? "로그인 확인 중..." : isSubmitting ? "로그인 중..." : "로그인"}</button>
+            {message && <p className="form-message error" role="alert">{message}</p>}
           </form>
           <p className="auth-switch">계정이 없으신가요? <a href="/signup">회원가입</a></p>
         </div>

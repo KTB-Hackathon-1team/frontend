@@ -7,11 +7,11 @@
 1. 이 폴더를 VS Code로 엽니다.
 2. 터미널에서 `npm install`을 실행합니다.
 3. `npm run dev`를 실행합니다.
-4. 브라우저에서 `http://localhost:3000`을 엽니다.
+4. 브라우저에서 `http://localhost:5173`을 엽니다.
 
 로그인은 `/`, 회원가입은 `/signup` 경로입니다.
 
-현재 제출 버튼은 프론트엔드 입력 검증과 데모 안내만 제공합니다. 실제 로그인, 계정 생성, 소셜 로그인은 백엔드 인증 API가 정해진 뒤 연결해야 합니다.
+인증 API 기본 주소는 `http://localhost:8080`이며 `.env`의 `VITE_API_BASE_URL`로 변경할 수 있습니다. Refresh Token은 HttpOnly 쿠키로 처리하고 Access Token은 프론트 메모리에서 관리합니다.
 
 ## 명령어
 
