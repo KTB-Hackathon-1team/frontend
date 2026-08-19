@@ -5,15 +5,15 @@ import { FormEvent, useState } from "react";
 export function LoginView() {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ loginId?: string; password?: string }>({});
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const email = String(form.get("email") ?? "").trim();
+    const loginId = String(form.get("loginId") ?? "").trim();
     const password = String(form.get("password") ?? "");
-    const nextErrors: { email?: string; password?: string } = {};
-    if (!/^\S+@\S+\.\S+$/.test(email)) nextErrors.email = "올바른 이메일 주소를 입력해 주세요.";
+    const nextErrors: { loginId?: string; password?: string } = {};
+    if (!loginId) nextErrors.loginId = "아이디를 입력해 주세요.";
     if (password.length < 8) nextErrors.password = "비밀번호는 8자 이상 입력해 주세요.";
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) {
@@ -55,7 +55,7 @@ export function LoginView() {
             <p>코코아에서 아이와의 따뜻한 대화를 이어가세요.</p>
           </div>
           <form onSubmit={handleSubmit} noValidate>
-            <label className="field"><span>이메일</span><input name="email" type="email" autoComplete="email" placeholder="이메일을 입력해 주세요" required aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "login-email-error" : undefined} />{errors.email && <small className="field-error" id="login-email-error">{errors.email}</small>}</label>
+            <label className="field"><span>아이디</span><input name="loginId" type="text" autoComplete="username" placeholder="아이디를 입력해 주세요" required aria-invalid={Boolean(errors.loginId)} aria-describedby={errors.loginId ? "login-id-error" : undefined} />{errors.loginId && <small className="field-error" id="login-id-error">{errors.loginId}</small>}</label>
             <label className="field">
               <span>비밀번호</span>
               <span className="password-wrap">
@@ -64,10 +64,6 @@ export function LoginView() {
               </span>
               {errors.password && <small className="field-error" id="login-password-error">{errors.password}</small>}
             </label>
-            <div className="form-options">
-              <label className="checkbox"><input type="checkbox" /> <span>로그인 상태 유지</span></label>
-              <button className="text-button" type="button">비밀번호 찾기</button>
-            </div>
             <button className="primary-button" type="submit">로그인</button>
             {message && <p className="form-message" role="status">{message}</p>}
           </form>

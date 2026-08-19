@@ -29,10 +29,9 @@ button,input { font:inherit; } button,a { -webkit-tap-highlight-color:transparen
 .field input[aria-invalid="true"] { border-color:#d95768; box-shadow:0 0 0 3px rgba(217,87,104,.08); }
 .field-error { display:block; margin:7px 2px 0; color:#c43f52; font-size:12px; line-height:1.45; }
 .password-wrap { position:relative; display:block; } .password-wrap input { padding-right:64px; } .password-toggle { position:absolute; right:10px; top:50%; transform:translateY(-50%); padding:8px; border:0; color:var(--muted); background:transparent; font-size:12px; font-weight:700; }
-.form-options { display:flex; justify-content:space-between; align-items:center; margin:-2px 0 24px; font-size:13px; } .checkbox { display:flex; align-items:center; gap:8px; color:#6f5f57; cursor:pointer; } .checkbox input { width:17px; height:17px; accent-color:var(--accent); }
-.text-button { padding:5px 0; border:0; color:var(--accent); background:transparent; font-size:13px; font-weight:700; }
+.checkbox { display:flex; align-items:center; gap:8px; color:#6f5f57; cursor:pointer; } .checkbox input { width:17px; height:17px; accent-color:var(--accent); }
 .primary-button { width:100%; min-height:52px; border:0; border-radius:11px; color:white; background:linear-gradient(100deg,var(--accent),var(--accent-dark)); box-shadow:0 10px 24px rgba(126,72,47,.22); font-weight:800; transition:transform .18s,box-shadow .18s; }
-.primary-button:hover { transform:translateY(-1px); box-shadow:0 13px 28px rgba(126,72,47,.28); } .primary-button:focus-visible,.text-button:focus-visible,a:focus-visible { outline:3px solid rgba(168,98,62,.34); outline-offset:3px; }
+.primary-button:hover { transform:translateY(-1px); box-shadow:0 13px 28px rgba(126,72,47,.28); } .primary-button:focus-visible,a:focus-visible { outline:3px solid rgba(168,98,62,.34); outline-offset:3px; }
 .form-message { margin:12px 0 0; padding:11px 13px; border-radius:9px; color:#7b4b37; background:#fff2e9; font-size:13px; text-align:center; }
 .auth-switch { margin:27px 0 0; color:var(--muted); font-size:14px; text-align:center; } .auth-switch a { color:var(--accent); font-weight:800; text-decoration:none; }
 .auth-footer { width:100%; margin-top:56px; display:flex; justify-content:center; gap:20px; color:#9aa2b5; font-size:11px; }

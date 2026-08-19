@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 
-type SignupErrors = { email?: string; password?: string; confirmPassword?: string; terms?: string };
+type SignupErrors = { loginId?: string; nickname?: string; password?: string; confirmPassword?: string; terms?: string };
 
 export function SignupView() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,11 +12,13 @@ export function SignupView() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const email = String(form.get("email") ?? "").trim();
+    const loginId = String(form.get("loginId") ?? "").trim();
+    const nickname = String(form.get("nickname") ?? "").trim();
     const password = String(form.get("password") ?? "");
     const confirmPassword = String(form.get("confirmPassword") ?? "");
     const nextErrors: SignupErrors = {};
-    if (!/^\S+@\S+\.\S+$/.test(email)) nextErrors.email = "올바른 이메일 주소를 입력해 주세요.";
+    if (!loginId) nextErrors.loginId = "아이디를 입력해 주세요.";
+    if (!nickname) nextErrors.nickname = "닉네임을 입력해 주세요.";
     if (password.length < 8) nextErrors.password = "영문·숫자를 포함해 8자 이상 입력해 주세요.";
     if (password !== confirmPassword) nextErrors.confirmPassword = "비밀번호가 일치하지 않아요.";
     if (!form.get("terms")) nextErrors.terms = "필수 약관에 동의해 주세요.";
@@ -43,7 +45,8 @@ export function SignupView() {
         <div className="auth-card signup-card">
           <div className="auth-heading"><span className="eyebrow accent">부모 계정</span><h2>회원가입</h2><p>아이 프로필은 가입 후 연결할 수 있어요.</p></div>
           <form onSubmit={handleSubmit} noValidate>
-            <label className="field"><span>이메일</span><input name="email" type="email" autoComplete="email" placeholder="이메일을 입력해 주세요" aria-invalid={Boolean(errors.email)} />{errors.email && <small className="field-error">{errors.email}</small>}</label>
+            <label className="field"><span>아이디</span><input name="loginId" type="text" autoComplete="username" placeholder="사용할 아이디를 입력해 주세요" aria-invalid={Boolean(errors.loginId)} />{errors.loginId && <small className="field-error">{errors.loginId}</small>}</label>
+            <label className="field"><span>닉네임</span><input name="nickname" type="text" autoComplete="nickname" placeholder="부모님을 부를 이름을 입력해 주세요" aria-invalid={Boolean(errors.nickname)} />{errors.nickname && <small className="field-error">{errors.nickname}</small>}</label>
             <label className="field"><span>비밀번호</span><span className="password-wrap"><input name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" placeholder="영문·숫자 포함 8자 이상" aria-invalid={Boolean(errors.password)} /><button className="password-toggle" type="button" onClick={() => setShowPassword((value) => !value)}>{showPassword ? "숨김" : "보기"}</button></span>{errors.password && <small className="field-error">{errors.password}</small>}</label>
             <label className="field"><span>비밀번호 확인</span><input name="confirmPassword" type={showPassword ? "text" : "password"} autoComplete="new-password" placeholder="비밀번호를 한 번 더 입력해 주세요" aria-invalid={Boolean(errors.confirmPassword)} />{errors.confirmPassword && <small className="field-error">{errors.confirmPassword}</small>}</label>
             <div className="profile-notice"><span aria-hidden="true">♢</span><div><b>아이 프로필은 나중에 연결할 수 있어요</b><small>가입 단계에서는 아이의 개인정보를 받지 않아요.</small></div></div>
