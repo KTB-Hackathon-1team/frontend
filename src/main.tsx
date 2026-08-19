@@ -1,15 +1,18 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { SWRConfig } from "swr";
 import App from "./App";
-import { AuthProvider } from "./auth/AuthContext";
-import "../app/globals.css";
-
-const initialPath = window.location.pathname.replace(/\/+$/, "") || "/";
+import { swrFetcher } from "./lib/apiClient";
+import "./tailwind.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AuthProvider restoreSession={initialPath === "/"}>
+    <SWRConfig value={{
+      fetcher: swrFetcher,
+      revalidateOnFocus: false,
+      shouldRetryOnError: false,
+    }}>
       <App />
-    </AuthProvider>
+    </SWRConfig>
   </StrictMode>,
 );

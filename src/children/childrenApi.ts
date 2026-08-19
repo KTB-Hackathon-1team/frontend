@@ -1,4 +1,4 @@
-import { apiRequest } from "../auth/authApi";
+import { apiRequest } from "../lib/apiClient";
 
 export type ChildGender = "MALE" | "FEMALE";
 
@@ -17,24 +17,21 @@ export type CreateChildInput = {
 };
 
 export async function getChildren() {
-  const result = await apiRequest<ChildProfile[]>("/api/children");
-  return result.data;
+  return apiRequest<ChildProfile[]>("/api/children");
 }
 
 export async function createChild(input: CreateChildInput) {
-  const result = await apiRequest<ChildProfile>("/api/children", {
+  return apiRequest<ChildProfile>("/api/children", {
     method: "POST",
     body: JSON.stringify(input),
   });
-  return result.data;
 }
 
 export async function uploadChildProfileImage(childProfileId: number, file: File) {
   const formData = new FormData();
   formData.append("file", file);
-  const result = await apiRequest<ChildProfile>(`/api/children/${childProfileId}/profile-image`, {
+  return apiRequest<ChildProfile>(`/api/children/${childProfileId}/profile-image`, {
     method: "POST",
     body: formData,
   });
-  return result.data;
 }
