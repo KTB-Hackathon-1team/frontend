@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import {
   AlertCircle,
   ArrowRight,
@@ -125,11 +125,7 @@ export function AuthenticatedView() {
     }
   }, [children, selectChild, selectedChildId]);
 
-  if (!user) return null;
-  const selectedChild =
-    children.find((child) => child.id === selectedChildId) ?? null;
-
-  async function handleRegister(event: FormEvent<HTMLFormElement>) {
+  const handleRegister = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setRegisterError("");
     setNotice("");
@@ -183,9 +179,9 @@ export function AuthenticatedView() {
     } catch (mutationError) {
       setRegisterError(getErrorMessage(mutationError));
     }
-  }
+  }, [gender, mutate, registerChild, selectChild]);
 
-  async function handleLogout() {
+  const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
     try {
       await logoutRequest();
@@ -194,7 +190,11 @@ export function AuthenticatedView() {
     } finally {
       setIsLoggingOut(false);
     }
-  }
+  }, [mutateAll, navigate]);
+
+  if (!user) return null;
+  const selectedChild =
+    children.find((child) => child.id === selectedChildId) ?? null;
 
   return (
     <main className="min-h-svh bg-[radial-gradient(circle_at_50%_16%,#fff0df_0,transparent_30%),#fbf7f3] text-[#342721]">
