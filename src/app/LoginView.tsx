@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useState } from "react";
+import { SubmitEvent, useCallback, useState } from "react";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -16,7 +16,7 @@ export function LoginView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ loginId?: string; password?: string }>({});
 
-  const handleSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const loginId = String(form.get("loginId") ?? "").trim();

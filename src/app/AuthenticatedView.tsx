@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { SubmitEvent, useCallback, useEffect, useState } from "react";
 import {
   AlertCircle,
   ArrowRight,
@@ -125,7 +125,7 @@ export function AuthenticatedView() {
     }
   }, [children, selectChild, selectedChildId]);
 
-  const handleRegister = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+  const handleRegister = useCallback(async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setRegisterError("");
     setNotice("");
