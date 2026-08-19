@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { Navigate, Outlet, createBrowserRouter } from "react-router";
 import { AuthenticatedView } from "./app/AuthenticatedView";
+import { CounselingBoardView } from "./app/CounselingBoardView";
+import { CounselingDetailView } from "./app/CounselingDetailView";
 import { LoginView } from "./app/LoginView";
 import { SignupView } from "./app/SignupView";
 import { refreshAccessToken } from "./auth/authApi";
@@ -64,7 +66,14 @@ export const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoute />,
-    children: [{ path: "/dashboard", element: <AuthenticatedView /> }],
+    children: [
+      { path: "/dashboard", element: <AuthenticatedView /> },
+      { path: "/children/:childId/counseling", element: <CounselingBoardView /> },
+      {
+        path: "/children/:childId/counseling/:sessionId",
+        element: <CounselingDetailView />,
+      },
+    ],
   },
   { path: "*", element: <NotFoundView /> },
 ]);

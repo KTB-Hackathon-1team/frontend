@@ -360,12 +360,11 @@ export function AuthenticatedView() {
                 <Button
                   className="h-11 min-w-52 bg-gradient-to-r from-[#a8623e] to-[#75432f] text-white"
                   disabled={!selectedChild}
-                  onClick={() =>
-                    selectedChild &&
-                    setNotice(
-                      `${selectedChild.name}이 프로필을 선택했어요. 이제 대화를 시작할 수 있어요.`,
-                    )
-                  }
+                  onClick={() => {
+                    if (!selectedChild) return;
+                    selectChild(selectedChild.id);
+                    navigate(`/children/${selectedChild.id}/counseling`);
+                  }}
                 >
                   {selectedChild
                     ? `${selectedChild.name}이와 시작하기`
