@@ -64,7 +64,13 @@ export const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoute />,
-    children: [{ path: "/dashboard", element: <AuthenticatedView /> }],
+    children: [
+      { path: "/dashboard", element: <AuthenticatedView /> },
+      {
+        path: "/talk",
+        lazy: () => import("./app/VoiceTalkView").then(({ VoiceTalkView: Component }) => ({ Component })),
+      },
+    ],
   },
   { path: "*", element: <NotFoundView /> },
 ]);

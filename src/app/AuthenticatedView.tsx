@@ -359,9 +359,7 @@ export function AuthenticatedView() {
                   disabled={!selectedChild}
                   onClick={() =>
                     selectedChild &&
-                    setNotice(
-                      `${selectedChild.name}이 프로필을 선택했어요. 이제 대화를 시작할 수 있어요.`,
-                    )
+                    navigate("/talk")
                   }
                 >
                   {selectedChild
