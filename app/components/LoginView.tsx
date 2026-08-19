@@ -25,10 +25,10 @@ export function LoginView() {
 
   return (
     <main className="auth-page">
-      <section className="brand-panel" aria-label="마음이음 소개">
-        <a className="brand brand-on-dark" href="/" aria-label="마음이음 홈">
+      <section className="brand-panel" aria-label="코코아 소개">
+        <a className="brand brand-on-dark" href="/" aria-label="코코아 홈">
           <span className="brand-symbol" aria-hidden="true"><i /><b /></span>
-          <span>마음이음</span>
+          <span>코코아</span>
         </a>
         <div className="brand-copy">
           <span className="eyebrow">AI 육아 길잡이</span>
@@ -44,15 +44,15 @@ export function LoginView() {
 
       <section className="form-panel">
         <div className="mobile-brand">
-          <a className="brand" href="/" aria-label="마음이음 홈">
-            <span className="brand-symbol" aria-hidden="true"><i /><b /></span><span>마음이음</span>
+          <a className="brand" href="/" aria-label="코코아 홈">
+            <span className="brand-symbol" aria-hidden="true"><i /><b /></span><span>코코아</span>
           </a>
         </div>
         <div className="auth-card">
           <div className="auth-heading">
-            <span className="eyebrow blue">다시 만나서 반가워요</span>
+            <span className="eyebrow accent">다시 만나서 반가워요</span>
             <h2>로그인</h2>
-            <p>마음이음에서 아이와의 대화를 이어가세요.</p>
+            <p>코코아에서 아이와의 따뜻한 대화를 이어가세요.</p>
           </div>
           <form onSubmit={handleSubmit} noValidate>
             <label className="field"><span>이메일</span><input name="email" type="email" autoComplete="email" placeholder="이메일을 입력해 주세요" required aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "login-email-error" : undefined} />{errors.email && <small className="field-error" id="login-email-error">{errors.email}</small>}</label>
@@ -71,15 +71,9 @@ export function LoginView() {
             <button className="primary-button" type="submit">로그인</button>
             {message && <p className="form-message" role="status">{message}</p>}
           </form>
-          <div className="divider"><span>또는</span></div>
-          <div className="social-row" aria-label="소셜 로그인">
-            <button className="social-button" type="button"><b className="google">G</b><span>Google</span></button>
-            <button className="social-button" type="button"><b className="kakao">K</b><span>카카오</span></button>
-            <button className="social-button" type="button"><b className="apple">●</b><span>Apple</span></button>
-          </div>
           <p className="auth-switch">계정이 없으신가요? <a href="/signup">회원가입</a></p>
         </div>
-        <footer className="auth-footer"><span>개인정보처리방침</span><span>이용약관</span><span>© 마음이음</span></footer>
+        <footer className="auth-footer"><span>개인정보처리방침</span><span>이용약관</span><span>© 코코아</span></footer>
       </section>
     </main>
   );
