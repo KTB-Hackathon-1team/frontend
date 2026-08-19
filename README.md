@@ -9,7 +9,7 @@
 3. `npm run dev`를 실행합니다.
 4. 브라우저에서 `http://localhost:5173`을 엽니다.
 
-로그인은 `/`, 회원가입은 `/signup` 경로입니다.
+`/`로 접속했을 때만 기존 로그인 세션을 확인한 뒤 `/login` 또는 로그인 이후 화면(예정)으로 이동합니다. `/login`과 `/signup`에 직접 접속하면 별도의 세션 확인 요청 없이 해당 화면을 표시하며, 로그인 후 화면은 `/dashboard` 경로입니다.
 
 인증 API 기본 주소는 `http://localhost:8080`이며 `.env`의 `VITE_API_BASE_URL`로 변경할 수 있습니다. Refresh Token은 HttpOnly 쿠키로 처리하고 Access Token은 프론트 메모리에서 관리합니다.
 

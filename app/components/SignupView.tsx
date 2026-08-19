@@ -3,12 +3,11 @@
 import { FormEvent, useState } from "react";
 import { ApiError } from "../../src/auth/authApi";
 import { useAuth } from "../../src/auth/AuthContext";
-import { AuthenticatedView } from "./AuthenticatedView";
 
 type SignupErrors = { loginId?: string; nickname?: string; password?: string; confirmPassword?: string; terms?: string };
 
 export function SignupView() {
-  const { user, isRestoring, signup } = useAuth();
+  const { isRestoring, signup } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<SignupErrors>({});
   const [message, setMessage] = useState("");
@@ -40,12 +39,10 @@ export function SignupView() {
     }
   }
 
-  if (user) return <AuthenticatedView />;
-
   return (
     <main className="auth-page signup-page">
       <section className="brand-panel" aria-label="코코아 소개">
-        <a className="brand brand-on-dark" href="/" aria-label="코코아 홈"><span className="brand-symbol" aria-hidden="true"><i /><b /></span><span>코코아</span></a>
+        <a className="brand brand-on-dark" href="/login" aria-label="코코아 로그인"><span className="brand-symbol" aria-hidden="true"><i /><b /></span><span>코코아</span></a>
         <div className="brand-copy">
           <span className="eyebrow">따뜻한 기술, 안전한 연결</span>
           <h1>마음을 이해하는<br />시간을 시작해요</h1>
@@ -56,7 +53,7 @@ export function SignupView() {
       </section>
 
       <section className="form-panel">
-        <div className="mobile-brand"><a className="brand" href="/" aria-label="코코아 홈"><span className="brand-symbol" aria-hidden="true"><i /><b /></span><span>코코아</span></a></div>
+        <div className="mobile-brand"><a className="brand" href="/login" aria-label="코코아 로그인"><span className="brand-symbol" aria-hidden="true"><i /><b /></span><span>코코아</span></a></div>
         <div className="auth-card signup-card">
           <div className="auth-heading"><span className="eyebrow accent">부모 계정</span><h2>회원가입</h2><p>아이 프로필은 가입 후 연결할 수 있어요.</p></div>
           <form onSubmit={handleSubmit} noValidate>
@@ -70,7 +67,7 @@ export function SignupView() {
             <button className="primary-button signup-button" type="submit" disabled={isSubmitting || isRestoring}>{isRestoring ? "로그인 확인 중..." : isSubmitting ? "계정 만드는 중..." : "계정 만들기"}</button>
             {message && <p className="form-message error" role="alert">{message}</p>}
           </form>
-          <p className="auth-switch">이미 계정이 있으신가요? <a href="/">로그인</a></p>
+          <p className="auth-switch">이미 계정이 있으신가요? <a href="/login">로그인</a></p>
         </div>
         <footer className="auth-footer"><span>개인정보처리방침</span><span>이용약관</span><span>© 코코아</span></footer>
       </section>

@@ -1,6 +1,12 @@
 :root { --ink:#342721; --muted:#79685f; --line:#eadfd8; --accent:#a8623e; --accent-dark:#75432f; }
 * { box-sizing:border-box; } html,body { min-height:100%; }
 body { margin:0; color:var(--ink); background:#fbf7f3; font-family:Pretendard,"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+.route-loading { min-height:100svh; display:grid; place-items:center; color:var(--muted); background:#fffaf6; font-size:14px; }
+.not-found-page { min-height:100svh; padding:28px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:radial-gradient(circle at 50% 20%,#fff0dd 0,transparent 32%),#fffaf6; }
+.not-found-page .brand { position:absolute; top:34px; left:clamp(24px,5vw,72px); }
+.not-found-code { margin-bottom:8px; color:#d2a48a; font-size:clamp(72px,12vw,128px); font-weight:900; letter-spacing:-.08em; line-height:1; }
+.not-found-page h1 { margin:0; font-size:clamp(28px,4vw,42px); letter-spacing:-.05em; } .not-found-page p { margin:14px 0 28px; color:var(--muted); }
+.not-found-link { min-height:48px; padding:0 24px; display:inline-flex; align-items:center; border-radius:11px; color:white; background:linear-gradient(100deg,var(--accent),var(--accent-dark)); font-weight:800; text-decoration:none; }
 button,input { font:inherit; } button,a { -webkit-tap-highlight-color:transparent; } button { cursor:pointer; }
 .auth-page { min-height:100svh; display:grid; grid-template-columns:minmax(360px,42%) 1fr; background:white; }
 .brand-panel { position:relative; overflow:hidden; min-height:100svh; padding:48px clamp(38px,5vw,80px); display:flex; flex-direction:column; color:white; background:linear-gradient(155deg,#dfb28f 0%,#b87753 42%,#704433 100%); }

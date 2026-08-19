@@ -3,10 +3,9 @@
 import { FormEvent, useState } from "react";
 import { ApiError } from "../../src/auth/authApi";
 import { useAuth } from "../../src/auth/AuthContext";
-import { AuthenticatedView } from "./AuthenticatedView";
 
 export function LoginView() {
-  const { user, isRestoring, login } = useAuth();
+  const { isRestoring, login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,12 +35,10 @@ export function LoginView() {
     }
   }
 
-  if (user) return <AuthenticatedView />;
-
   return (
     <main className="auth-page">
       <section className="brand-panel" aria-label="코코아 소개">
-        <a className="brand brand-on-dark" href="/" aria-label="코코아 홈">
+        <a className="brand brand-on-dark" href="/login" aria-label="코코아 로그인">
           <span className="brand-symbol" aria-hidden="true"><i /><b /></span>
           <span>코코아</span>
         </a>
@@ -59,7 +56,7 @@ export function LoginView() {
 
       <section className="form-panel">
         <div className="mobile-brand">
-          <a className="brand" href="/" aria-label="코코아 홈">
+          <a className="brand" href="/login" aria-label="코코아 로그인">
             <span className="brand-symbol" aria-hidden="true"><i /><b /></span><span>코코아</span>
           </a>
         </div>

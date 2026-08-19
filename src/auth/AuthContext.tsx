@@ -17,11 +17,19 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({
+  children,
+  restoreSession,
+}: {
+  children: ReactNode;
+  restoreSession: boolean;
+}) {
   const [user, setUser] = useState<ParentUser | null>(null);
-  const [isRestoring, setIsRestoring] = useState(true);
+  const [isRestoring, setIsRestoring] = useState(restoreSession);
 
   useEffect(() => {
+    if (!restoreSession) return;
+
     let active = true;
     refreshAccessToken()
       .then((data) => {
@@ -36,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [restoreSession]);
 
   const value = useMemo<AuthContextValue>(() => ({
     user,
