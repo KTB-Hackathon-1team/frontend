@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Navigate, Outlet, createBrowserRouter } from "react-router";
-import { AuthenticatedView } from "./app/components/AuthenticatedView";
-import { LoginView } from "./app/components/LoginView";
-import { SignupView } from "./app/components/SignupView";
+import { AuthenticatedView } from "./app/AuthenticatedView";
+import { LoginView } from "./app/LoginView";
+import { SignupView } from "./app/SignupView";
 import { refreshAccessToken } from "./auth/authApi";
 import { useAuthStore } from "./stores/authStore";
 

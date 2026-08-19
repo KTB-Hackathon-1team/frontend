@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { SubmitEvent, useCallback, useState } from "react";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ApiError, loginRequest } from "../../auth/authApi";
-import { AuthLayout } from "./AuthLayout";
+import { ApiError, loginRequest } from "../auth/authApi";
+import { AuthLayout } from "../components/AuthLayout";
 
 export function LoginView() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export function LoginView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ loginId?: string; password?: string }>({});
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleSubmit = useCallback(async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const loginId = String(form.get("loginId") ?? "").trim();
@@ -40,7 +40,7 @@ export function LoginView() {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  }, [navigate]);
 
   return (
     <AuthLayout eyebrow="AI 육아 길잡이" title={<>안심하고<br />이야기를 시작하세요</>} description={<>아이의 마음을 소중히 듣고,<br />서로를 이해하는 대화를 함께 만들어요.</>} trustMessage="모든 대화는 안전하게 보호돼요">

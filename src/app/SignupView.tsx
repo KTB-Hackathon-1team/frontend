@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { SubmitEvent, useCallback, useState } from "react";
 import { AlertCircle, Eye, EyeOff, Info } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -7,8 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ApiError, signupRequest } from "../../auth/authApi";
-import { AuthLayout } from "./AuthLayout";
+import { ApiError, signupRequest } from "../auth/authApi";
+import { AuthLayout } from "../components/AuthLayout";
 
 type SignupErrors = { loginId?: string; nickname?: string; password?: string; confirmPassword?: string; terms?: string };
 
@@ -20,7 +20,7 @@ export function SignupView() {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleSubmit = useCallback(async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const loginId = String(form.get("loginId") ?? "").trim();
@@ -49,7 +49,7 @@ export function SignupView() {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  }, [navigate, termsAccepted]);
 
   const fieldClass = "h-11 bg-white";
   return (
